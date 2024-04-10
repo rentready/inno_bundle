@@ -33,6 +33,9 @@ Future<void> _buildInstaller(Config config, File scriptFile) async {
 /// Run to build installer
 void main(List<String> arguments) async {
   final parser = ArgParser()
+    ..addOption("args", defaultsTo: "")
+    ..addOption("build-name", defaultsTo: "1.0.0")
+    ..addOption("build-number", defaultsTo: "1")
     ..addFlag(BuildType.release.name, negatable: false)
     ..addFlag(BuildType.profile.name, negatable: false)
     ..addFlag(BuildType.debug.name, negatable: false, help: 'Default flag')
@@ -61,7 +64,14 @@ void main(List<String> arguments) async {
     exit(0);
   }
 
-  final config = Config.fromFile(type: type, app: app, installer: installer);
+  final config = Config.fromFile(
+    type: type,
+    app: app,
+    installer: installer,
+    args: parsedArgs['args'] as String,
+    buildName: parsedArgs['build-name'] as String,
+    buildNumber: parsedArgs['build-number'] as String,
+  );
 
   if (envs) {
     print(config.toEnvironmentVariables());

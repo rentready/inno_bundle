@@ -40,7 +40,18 @@ class AppBuilder {
 
     final process = await Process.start(
       "flutter",
-      ['build', 'windows', '--${config.type.name}'],
+      [
+        'build',
+        'windows',
+        '--${config.type.name}',
+        '--obfuscate',
+        '--split-debug-info=build/obfuscate',
+        '--build-name',
+        config.buildName,
+        '--build-number',
+        config.buildNumber,
+        config.args,
+      ],
       runInShell: true,
       workingDirectory: Directory.current.path,
       mode: ProcessStartMode.inheritStdio,
