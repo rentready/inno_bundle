@@ -19,6 +19,8 @@ class Config {
   /// The name of the app after packaging.
   final String name;
 
+  final String displayName;
+
   /// A description of the app being packaged.
   final String description;
 
@@ -60,6 +62,7 @@ class Config {
     required this.id,
     required this.pubspecName,
     required this.name,
+    required this.displayName,
     required this.description,
     required this.version,
     required this.publisher,
@@ -120,6 +123,7 @@ class Config {
       exit(1);
     }
     final String name = inno['name'] ?? pubspecName;
+    final String displayName = inno['display_name'];
 
     if ((inno['version'] ?? json['version']) is! String) {
       CliLogger.error("version attribute is missing from pubspec.yaml.");
@@ -189,6 +193,7 @@ class Config {
       id: id,
       pubspecName: pubspecName,
       name: name,
+      displayName: displayName,
       description: description,
       version: version,
       publisher: publisher,
@@ -230,6 +235,7 @@ class Config {
       'APP_ID': id,
       'PUBSPEC_NAME': pubspecName,
       'APP_NAME': name,
+      'APP_DISPLAY_NAME': displayName,
       'APP_NAME_CAMEL_CASE': camelCase(name),
       'APP_DESCRIPTION': description,
       'APP_VERSION': version,

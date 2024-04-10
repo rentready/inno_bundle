@@ -20,6 +20,7 @@ class ScriptBuilder {
   String _setup() {
     final id = config.id;
     final name = config.name;
+    final displayName = config.displayName;
     final version = config.version;
     final publisher = config.publisher;
     final url = config.url;
@@ -46,7 +47,7 @@ class ScriptBuilder {
     return '''
 [Setup]
 AppId=$id
-AppName=$name
+AppName=$displayName
 AppVersion=$version
 AppPublisher=$publisher
 AppPublisherURL=$url
