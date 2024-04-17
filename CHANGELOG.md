@@ -85,3 +85,9 @@
 ## 0.4.2
 
 - Update packages version and minimum dart and flutter version to latest.
+
+## 0.5.0
+
+- Update packages and lower back minimum dart and flutter versions.
+
+- rework usage of app name and pubspec name props. See [#2](https://github.com/hahouari/inno_bundle/issues/2).
