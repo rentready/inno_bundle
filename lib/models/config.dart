@@ -13,7 +13,10 @@ class Config {
   /// The unique identifier (UUID) for the app being packaged.
   final String id;
 
-  /// The name of the app being packaged.
+  /// The global pubspec name attribute, same name of the exe generated from flutter build.
+  final String pubspecName;
+
+  /// The name of the app after packaging.
   final String name;
 
   /// A description of the app being packaged.
@@ -55,6 +58,7 @@ class Config {
   /// Creates a [Config] instance with default values.
   const Config({
     required this.id,
+    required this.pubspecName,
     required this.name,
     required this.description,
     required this.version,
@@ -69,6 +73,9 @@ class Config {
     this.app = true,
     this.installer = true,
   });
+
+  /// The name of the executable file that is created with flutter build.
+  String get exePubspecName => "$pubspecName.exe";
 
   /// The name of the executable file that will be created.
   String get exeName => "$name.exe";
@@ -101,11 +108,18 @@ class Config {
     }
     final String id = inno['id'];
 
-    if ((inno['name'] ?? json['name']) is! String) {
+    if (json['name'] is! String) {
       CliLogger.error("name attribute is missing from pubspec.yaml.");
       exit(1);
     }
-    final String name = inno['name'] ?? json['name'];
+    final String pubspecName = json['name'];
+
+    if (inno['name'] != null && !validFilenameRegex.hasMatch(inno['name'])) {
+      CliLogger.error("inno_bundle.name from pubspec.yaml is not valid. "
+          "`${inno['name']}` is not a valid file name.");
+      exit(1);
+    }
+    final String name = inno['name'] ?? pubspecName;
 
     if ((inno['version'] ?? json['version']) is! String) {
       CliLogger.error("version attribute is missing from pubspec.yaml.");
@@ -173,6 +187,7 @@ class Config {
 
     return Config(
       id: id,
+      pubspecName: pubspecName,
       name: name,
       description: description,
       version: version,
@@ -213,6 +228,7 @@ class Config {
   String toEnvironmentVariables() {
     final variables = <String, String>{
       'APP_ID': id,
+      'PUBSPEC_NAME': pubspecName,
       'APP_NAME': name,
       'APP_NAME_CAMEL_CASE': camelCase(name),
       'APP_DESCRIPTION': description,

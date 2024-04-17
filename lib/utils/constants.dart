@@ -45,3 +45,5 @@ final innoUserDirPath = [
 ];
 
 const defaultInstallerIconPlaceholder = "__default_installer__icon__";
+
+final validFilenameRegex = RegExp(r'^[^<>:"/\\|?*\x00-\x1F]+$');

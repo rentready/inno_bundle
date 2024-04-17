@@ -29,10 +29,10 @@ Map<String, dynamic> yamlToMap(YamlMap yamlMap) {
 
 /// Converts a string to camelCase.
 ///
-/// Example: `camelCase("hello-world_there")` returns "helloWorldThere".
+/// Example: `camelCase("hello-world_out there")` returns "helloWorldOutThere".
 String camelCase(String value) {
   return value
-      .split(RegExp(r'[-_]'))
+      .split(RegExp(r'[-_]|\s'))
       .map((word) => word.isEmpty ? '' : capitalize(word))
       .join('');
 }

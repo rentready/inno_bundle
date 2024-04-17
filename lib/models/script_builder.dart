@@ -19,15 +19,14 @@ class ScriptBuilder {
 
   String _setup() {
     final id = config.id;
-    final name = camelCase(config.name);
+    final name = config.name;
     final version = config.version;
     final publisher = config.publisher;
     final url = config.url;
     final supportUrl = config.supportUrl;
     final updatesUrl = config.updatesUrl;
     final privileges = config.admin ? 'admin' : 'lowest';
-    final installerName = '${camelCase(config.name)}-x86_64'
-        '-${config.version}-Installer';
+    final installerName = '${camelCase(name)}-x86_64-$version-Installer';
     var installerIcon = config.installerIcon;
     final outputDir = p.joinAll([
       Directory.current.path,
@@ -39,7 +38,7 @@ class ScriptBuilder {
     if (installerIcon == defaultInstallerIconPlaceholder) {
       final installerIconDirPath = p.joinAll([
         Directory.systemTemp.absolute.path,
-        "${camelCase(config.name)}Installer",
+        "${camelCase(name)}Installer",
       ]);
       installerIcon = persistDefaultInstallerIcon(installerIconDirPath);
     }
@@ -92,7 +91,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
   String _files() {
     String section = "[Files]\n";
 
-    // adding app files
+    // adding app build files
     final files = appDir.listSync();
     for (final file in files) {
       final filePath = file.absolute.path;
@@ -101,8 +100,16 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
         section += "Source: \"$filePath\\*\"; DestDir: \"{app}\\$fileName\"; "
             "Flags: ignoreversion recursesubdirs createallsubdirs\n";
       } else {
-        section += "Source: \"$filePath\"; DestDir: \"{app}\"; "
-            "Flags: ignoreversion\n";
+        // override the default exe file name from the name provided by
+        // flutter build, to the inno_bundle.name property value (if provided)
+        if (p.basename(filePath) == config.exePubspecName) {
+          print("Renamed ${config.exePubspecName} ${config.exeName}");
+          section += "Source: \"$filePath\"; DestDir: \"{app}\"; "
+              "DestName: \"${config.exeName}\"; Flags: ignoreversion\n";
+        } else {
+          section += "Source: \"$filePath\"; DestDir: \"{app}\"; "
+              "Flags: ignoreversion\n";
+        }
       }
     }
 
