@@ -12,18 +12,24 @@ capabilities.
 
 ### 1. Download Inno Setup
 
-- **Option 1: Using winget**
+- **Option 1: Using winget (Recommended)**
 
 ```ps
 winget install -e --id JRSoftware.InnoSetup
 ```
 
-- **Option 2: From the website**
+- **Option 2: Using chocolatey**
+
+```ps
+choco install innosetup
+```
+
+- **Option 3: From official website**
 
   Download Inno Setup from <a href="https://jrsoftware.org/isdl.php" target="_blank">official
   website</a>. Then install it in your machine.
 
-  _Note: This package is tested on Inno Setup version `6.2.2`._
+_Note: This package is tested on Inno Setup version `6.2.2`._
 
 ### 2. Install `inno_bundle` package into your project
 
@@ -59,6 +65,7 @@ Add your configuration to your `pubspec.yaml`. example:
 inno_bundle:
   id: f887d5f0-4690-1e07-8efc-d16ea7711bfb # <-- Put your own generated id here
   publisher: Your Name # Optional, but recommended.
+  name: Demo App # Also optional, but recommended.
 ```
 
 ### 5. Build the Installer
@@ -73,14 +80,16 @@ dart run inno_bundle:build --release
 _Note: `--release` flag is required if you want to build for `release` mode, see
 below for other options._
 
-## Set it up on a GitHub Workflow
+## Using GitHub Workflow?
 
-To automate building the installer with GitHub actions, check out the demo [here](https://github.com/hahouari/flutter_inno_workflows_demo).
+To automate building the installer with GitHub actions,
+check out [the demo](https://github.com/hahouari/flutter_inno_workflows_demo).
 
-You can copy the workflow from the [build.yaml](https://github.com/hahouari/flutter_inno_workflows_demo/blob/dev/.github/workflows/build.yaml),
-it will run on `windows-latest` machine, it builds of the installer and it also pushes it to
-[GitHub Releases](https://github.com/hahouari/flutter_inno_workflows_demo/releases) with correct versioning,
-just in case you needed such step, well it is there :).
+You can copy the [build.yaml](https://github.com/hahouari/flutter_inno_workflows_demo/blob/dev/.github/workflows/build.yaml)
+file to your project and make sure to update
+[the push branch](https://github.com/hahouari/flutter_inno_workflows_demo/blob/fb49da23996161acc80f0e9f4c169a01908a29a7/.github/workflows/build.yaml#L5).
+It will build the installer and push it to
+[GitHub Releases](https://github.com/hahouari/flutter_inno_workflows_demo/releases) with correct versioning.
 
 ## Attributes
 
@@ -88,7 +97,7 @@ Full list of attributes which you can use into your configuration.
 All attributes should be under `inno_bundle` in `pubspec.yaml`.
 
 - `id`: `Required` A valid GUID that serves as an AppId.
-- `name`: App name. Defaults to camel cased `name` from `pubspec.yaml`.
+- `name`: App display name. Defaults to camel cased `name` from `pubspec.yaml`.
 - `description`: Defaults to `description` from `pubspec.yaml`.
 - `version`: Defaults to `version` from `pubspec.yaml`.
 - `publisher`: Defaults to `maintainer` from `pubspec.yaml`. Otherwise, an empty
@@ -160,7 +169,7 @@ inno_bundle:
 ```yaml
 inno_bundle:
   id: f887d5f0-4690-1e07-8efc-d16ea7711bfb
-  name: google_flutter_framework
+  name: Google Flutter Framework
   description: Flutter makes it easy and fast to build beautiful apps for mobile and beyond.
   publisher: Google LLC
   url: https://github.com/flutter/flutter
