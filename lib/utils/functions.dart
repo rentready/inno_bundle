@@ -33,7 +33,7 @@ Map<String, dynamic> yamlToMap(YamlMap yamlMap) {
 String camelCase(String value) {
   return value
       .split(RegExp(r'[-_]|\s'))
-      .map((word) => word.isEmpty ? '' : capitalize(word))
+      .map((word) => capitalize(word))
       .join('');
 }
 
@@ -41,6 +41,7 @@ String camelCase(String value) {
 ///
 /// Example: `capitalize("hello")` returns "Hello".
 String capitalize(String value) {
+  if (value.isEmpty) return "";
   return value[0].toUpperCase() + value.substring(1);
 }
 

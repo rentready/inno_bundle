@@ -1,3 +1,5 @@
+import 'dart:io';
+
 /// Log levels
 enum CliLoggerLevel {
   /// Level one
@@ -42,6 +44,17 @@ class CliLogger {
     print('$space❌  $message');
   }
 
+  /// Logs a error message at the given level and exits with given code.
+  static void exitError(
+    String message, {
+    CliLoggerLevel level = CliLoggerLevel.one,
+    int exitCode = 1,
+  }) {
+    final space = _getSpace(level);
+    print('$space❌  $message');
+    exit(exitCode);
+  }
+
   /// Logs a warning message at the given level.
   static void warning(
     String message, {
@@ -58,6 +71,14 @@ class CliLogger {
   }) {
     final space = _getSpace(level);
     print('\x1B[32m$space✅  $message\x1B[0m');
+  }
+
+  static String sLink(
+    String link, {
+    CliLoggerLevel level = CliLoggerLevel.one,
+  }) {
+    final space = _getSpace(level);
+    return '\x1B[34m$space🔗  $link\x1B[0m';
   }
 
   static String _getSpace(CliLoggerLevel level) {

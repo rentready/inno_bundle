@@ -30,7 +30,8 @@ const String GUID_END_MESSAGE = '''\n
                   ❤️  THANK YOU!  ❤️
 ''';
 
-const innoDownloadLink = "https://jrsoftware.org/isdl.php";
+const readmeDownloadStepLink = "https://github.com/hahouari/inno_bundle"
+    "?tab=readme-ov-file#1-download-inno-setup";
 const appBuildDir = ["build", "windows", "x64", "runner"];
 const installerBuildDir = ["build", "windows", "x64", "installer"];
 const system32 = ["C:", "Windows", "System32"];

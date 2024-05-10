@@ -25,6 +25,10 @@ class AppBuilder {
       config.type.dirName,
     ]);
     final buildDir = Directory(buildDirPath);
+    final versionParts = config.version.split("+");
+    final buildName = versionParts[0];
+    final buildNumber =
+        versionParts.length == 1 ? "1" : versionParts.sublist(1).join("+");
 
     if (!config.app) {
       if (!buildDir.existsSync() || buildDir.listSync().isEmpty) {
@@ -43,14 +47,15 @@ class AppBuilder {
       [
         'build',
         'windows',
+        './lib/main.dart',
         '--${config.type.name}',
         '--obfuscate',
         '--split-debug-info=build/obfuscate',
         '--build-name',
-        config.buildName,
+        buildName,
         '--build-number',
-        config.buildNumber,
-        config.args,
+        buildNumber,
+        config.buildArgs ?? "",
       ],
       runInShell: true,
       workingDirectory: Directory.current.path,

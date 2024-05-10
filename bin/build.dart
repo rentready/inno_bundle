@@ -33,14 +33,13 @@ Future<void> _buildInstaller(Config config, File scriptFile) async {
 /// Run to build installer
 void main(List<String> arguments) async {
   final parser = ArgParser()
-    ..addOption("args", defaultsTo: "")
-    ..addOption("build-name", defaultsTo: "1.0.0")
-    ..addOption("build-number", defaultsTo: "1")
     ..addFlag(BuildType.release.name, negatable: false)
     ..addFlag(BuildType.profile.name, negatable: false)
     ..addFlag(BuildType.debug.name, negatable: false, help: 'Default flag')
-    ..addFlag('app', defaultsTo: true, help: 'build app')
-    ..addFlag('installer', defaultsTo: true, help: 'build installer')
+    ..addFlag('app', defaultsTo: true, help: 'Build app')
+    ..addFlag('installer', defaultsTo: true, help: 'Build installer')
+    ..addOption("build-args", help: "Appended to `flutter build`")
+    ..addOption("app-version", help: "Override app version")
     ..addFlag(
       'envs',
       defaultsTo: false,
@@ -50,9 +49,6 @@ void main(List<String> arguments) async {
     ..addFlag('hf', defaultsTo: true, help: 'Print header and footer')
     ..addFlag('help', abbr: 'h', negatable: false, help: 'Print help and exit');
   final parsedArgs = parser.parse(arguments);
-  final type = BuildType.fromArgs(parsedArgs);
-  final app = parsedArgs['app'] as bool;
-  final installer = parsedArgs['installer'] as bool;
   final envs = parsedArgs['envs'] as bool;
   final hf = parsedArgs['hf'] as bool;
   final help = parsedArgs['help'] as bool;
@@ -65,12 +61,11 @@ void main(List<String> arguments) async {
   }
 
   final config = Config.fromFile(
-    type: type,
-    app: app,
-    installer: installer,
-    args: parsedArgs['args'] as String,
-    buildName: parsedArgs['build-name'] as String,
-    buildNumber: parsedArgs['build-number'] as String,
+    type: BuildType.fromArgs(parsedArgs),
+    app: parsedArgs['app'],
+    installer: parsedArgs['installer'],
+    buildArgs: parsedArgs['build-args'],
+    appVersion: parsedArgs['app-version'],
   );
 
   if (envs) {
@@ -78,9 +73,12 @@ void main(List<String> arguments) async {
     exit(0);
   }
 
-  final appBuildDir = await _buildApp(config);
-  final scriptFile = await _buildScript(config, appBuildDir);
-  await _buildInstaller(config, scriptFile);
-
+  try {
+    final appBuildDir = await _buildApp(config);
+    final scriptFile = await _buildScript(config, appBuildDir);
+    await _buildInstaller(config, scriptFile);
+  } catch (e, stacktrace) {
+    print(stacktrace.toString());
+  }
   if (hf) print(BUILD_END_MESSAGE);
 }

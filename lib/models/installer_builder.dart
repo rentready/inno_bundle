@@ -22,10 +22,9 @@ class InstallerBuilder {
   File _getInnoSetupExec() {
     if (!Directory(p.joinAll(innoSysDirPath)).existsSync() &&
         !Directory(p.joinAll(innoUserDirPath)).existsSync()) {
-      CliLogger.error("Inno Setup is not installed or detected "
-          "in your machine, you either: \n\tDownload and install it from "
-          "`$innoDownloadLink`.\n\tUsing winget >>> "
-          "`winget install -e --id JRSoftware.InnoSetup`.");
+      CliLogger.error("Inno Setup is not detected in your machine, "
+          "checkout our README on how to correctly install it:\n"
+          "${CliLogger.sLink(readmeDownloadStepLink, level: CliLoggerLevel.two)}");
       exit(1);
     }
 
@@ -37,10 +36,9 @@ class InstallerBuilder {
     if (sysExecFile.existsSync()) return sysExecFile;
     if (userExecFile.existsSync()) return userExecFile;
 
-    CliLogger.error("Inno Setup installation in your machine "
-        "is corrupted or incomplete, you either: \n\tDownload and "
-        "re-install it from `$innoDownloadLink`.\n\tUsing winget >>> "
-        "`winget install -e --id JRSoftware.InnoSetup`.");
+    CliLogger.error("Inno Setup installation in your machine is corrupted "
+        "or incomplete, checkout our README on how to correctly install it:\n"
+        "${CliLogger.sLink(readmeDownloadStepLink, level: CliLoggerLevel.two)}");
     exit(1);
   }
 

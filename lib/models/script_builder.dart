@@ -20,7 +20,6 @@ class ScriptBuilder {
   String _setup() {
     final id = config.id;
     final name = config.name;
-    final displayName = config.displayName;
     final version = config.version;
     final publisher = config.publisher;
     final url = config.url;
@@ -49,16 +48,15 @@ class ScriptBuilder {
     return '''
 [Setup]
 AppId=$id
-AppName=$displayName
-UninstallDisplayName=$displayName
+AppName=$name
+UninstallDisplayName=$name
 UninstallDisplayIcon=$uninstallIcon
-DefaultDialogFontName=Meiryo
 AppVersion=$version
 AppPublisher=$publisher
 AppPublisherURL=$url
 AppSupportURL=$supportUrl
 AppUpdatesURL=$updatesUrl
-DefaultDirName={autopf}\\$displayName
+DefaultDirName={autopf}\\$name
 PrivilegesRequired=$privileges
 OutputDir=$outputDir
 OutputBaseFilename=$installerName
@@ -141,7 +139,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
   }
 
   String _icons() {
-    final name = config.displayName;
+    final name = config.name;
     final exeName = config.exeName;
     return '''
 [Icons]
@@ -151,7 +149,7 @@ Name: "{autodesktop}\\$name"; Filename: "{app}\\$exeName"; Tasks: desktopicon
   }
 
   String _run() {
-    final name = config.displayName;
+    final name = config.name;
     final exeName = config.exeName;
     return '''
 [Run]

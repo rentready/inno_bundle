@@ -19,8 +19,6 @@ class Config {
   /// The name of the app after packaging.
   final String name;
 
-  final String displayName;
-
   /// A description of the app being packaged.
   final String description;
 
@@ -57,21 +55,15 @@ class Config {
   /// Whether to create an installer file.
   final bool installer;
 
-  final String args;
-
-  final String buildName;
-
-  final String buildNumber;
+  /// Arguments to be passed to flutter build.
+  final String? buildArgs;
 
   /// Creates a [Config] instance with default values.
   const Config({
-    required this.args,
-    required this.buildName,
-    required this.buildNumber,
+    required this.buildArgs,
     required this.id,
     required this.pubspecName,
     required this.name,
-    required this.displayName,
     required this.description,
     required this.version,
     required this.publisher,
@@ -100,60 +92,51 @@ class Config {
     BuildType type = BuildType.debug,
     bool app = true,
     bool installer = true,
-    required String args,
-    required String buildName,
-    required String buildNumber,
+    required String? buildArgs,
+    required String? appVersion,
   }) {
     if (json['inno_bundle'] is! Map<String, dynamic>) {
-      CliLogger.error("inno_bundle section is missing from pubspec.yaml.");
-      exit(1);
+      CliLogger.exitError("inno_bundle section is missing from pubspec.yaml.");
     }
     final Map<String, dynamic> inno = json['inno_bundle'];
 
     if (inno['id'] is! String) {
-      CliLogger.error("inno_bundle.id attribute is missing from pubspec.yaml. "
+      CliLogger.exitError(
+          "inno_bundle.id attribute is missing from pubspec.yaml. "
           "Run `dart run inno_bundle:guid` to generate a new one, "
           "then put it in your pubspec.yaml.");
-      exit(1);
     } else if (!Uuid.isValidUUID(fromString: inno['id'])) {
-      CliLogger.error("inno_bundle.id from pubspec.yaml is not valid. "
+      CliLogger.exitError("inno_bundle.id from pubspec.yaml is not valid. "
           "Run `dart run inno_bundle:guid` to generate a new one, "
           "then put it in your pubspec.yaml.");
-      exit(1);
     }
     final String id = inno['id'];
 
     if (json['name'] is! String) {
-      CliLogger.error("name attribute is missing from pubspec.yaml.");
-      exit(1);
+      CliLogger.exitError("name attribute is missing from pubspec.yaml.");
     }
     final String pubspecName = json['name'];
 
     if (inno['name'] != null && !validFilenameRegex.hasMatch(inno['name'])) {
-      CliLogger.error("inno_bundle.name from pubspec.yaml is not valid. "
+      CliLogger.exitError("inno_bundle.name from pubspec.yaml is not valid. "
           "`${inno['name']}` is not a valid file name.");
-      exit(1);
     }
     final String name = inno['name'] ?? pubspecName;
-    final String displayName = inno['display_name'];
 
-    // if ((inno['version'] ?? json['version']) is! String) {
-    //   CliLogger.error("version attribute is missing from pubspec.yaml.");
-    //   exit(1);
-    // }
-    // final String version = inno['version'] ?? json['version'];
-    final String version = "$buildName+$buildNumber";
+    if ((appVersion ?? inno['version'] ?? json['version']) is! String) {
+      CliLogger.exitError("version attribute is missing from pubspec.yaml.");
+    }
+    final String version = appVersion ?? inno['version'] ?? json['version'];
 
     if ((inno['description'] ?? json['description']) is! String) {
-      CliLogger.error("description attribute is missing from pubspec.yaml.");
-      exit(1);
+      CliLogger.exitError(
+          "description attribute is missing from pubspec.yaml.");
     }
     final String description = inno['description'] ?? json['description'];
 
     if ((inno['publisher'] ?? json['maintainer']) is! String) {
-      CliLogger.error("maintainer or inno_bundle.publisher attributes are "
+      CliLogger.exitError("maintainer or inno_bundle.publisher attributes are "
           "missing from pubspec.yaml.");
-      exit(1);
     }
     final String publisher = inno['publisher'] ?? json['maintainer'];
 
@@ -162,9 +145,8 @@ class Config {
     final updatesUrl = (inno['updates_url'] as String?) ?? url;
 
     if (inno['installer_icon'] != null && inno['installer_icon'] is! String) {
-      CliLogger.error("inno_bundle.installer_icon attribute is invalid "
+      CliLogger.exitError("inno_bundle.installer_icon attribute is invalid "
           "in pubspec.yaml.");
-      exit(1);
     }
     final installerIcon = inno['installer_icon'] != null
         ? p.join(
@@ -174,42 +156,37 @@ class Config {
         : defaultInstallerIconPlaceholder;
     if (installerIcon != defaultInstallerIconPlaceholder &&
         !File(installerIcon).existsSync()) {
-      CliLogger.error("inno_bundle.installer_icon attribute value is invalid, "
+      CliLogger.exitError(
+          "inno_bundle.installer_icon attribute value is invalid, "
           "`$installerIcon` file does not exist.");
-      exit(1);
     }
 
     if (inno['languages'] != null && inno['languages'] is! List<String>) {
-      CliLogger.error("inno_bundle.languages attribute is invalid "
+      CliLogger.exitError("inno_bundle.languages attribute is invalid "
           "in pubspec.yaml, only a list of strings is allowed.");
-      exit(1);
     }
     final languages = (inno['languages'] as List<String>?)?.map((l) {
           final language = Language.getByNameOrNull(l);
           if (language == null) {
-            CliLogger.error("error in inno_bundle.languages attribute "
+            CliLogger.exitError("problem in inno_bundle.languages attribute "
                 "in pubspec.yaml, language `$l` is not supported.");
-            exit(1);
           }
-          return language;
+          return language!;
         }).toList(growable: false) ??
         Language.values;
 
     if (json['admin'] != null && json['admin'] is! bool) {
-      CliLogger.error("admin attribute is invalid boolean value "
+      CliLogger.exitError(
+          "inno_bundle.admin attribute is invalid boolean value "
           "in pubspec.yaml");
-      exit(1);
     }
     final bool admin = json['admin'] ?? true;
 
     return Config(
-      args: args,
-      buildName: buildName,
-      buildNumber: buildNumber,
+      buildArgs: buildArgs,
       id: id,
       pubspecName: pubspecName,
       name: name,
-      displayName: displayName,
       description: description,
       version: version,
       publisher: publisher,
@@ -232,9 +209,8 @@ class Config {
     BuildType type = BuildType.debug,
     bool app = true,
     bool installer = true,
-    required String args,
-    required String buildName,
-    required String buildNumber,
+    required String? buildArgs,
+    required String? appVersion,
   }) {
     const filePath = 'pubspec.yaml';
     final yamlMap = loadYaml(File(filePath).readAsStringSync()) as Map;
@@ -245,9 +221,8 @@ class Config {
       type: type,
       app: app,
       installer: installer,
-      args: args,
-      buildName: buildName,
-      buildNumber: buildNumber,
+      buildArgs: buildArgs,
+      appVersion: appVersion,
     );
   }
 
@@ -257,7 +232,6 @@ class Config {
       'APP_ID': id,
       'PUBSPEC_NAME': pubspecName,
       'APP_NAME': name,
-      'APP_DISPLAY_NAME': displayName,
       'APP_NAME_CAMEL_CASE': camelCase(name),
       'APP_DESCRIPTION': description,
       'APP_VERSION': version,
