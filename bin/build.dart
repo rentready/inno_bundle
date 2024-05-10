@@ -73,12 +73,9 @@ void main(List<String> arguments) async {
     exit(0);
   }
 
-  try {
-    final appBuildDir = await _buildApp(config);
-    final scriptFile = await _buildScript(config, appBuildDir);
-    await _buildInstaller(config, scriptFile);
-  } catch (e, stacktrace) {
-    print(stacktrace.toString());
-  }
+  final appBuildDir = await _buildApp(config);
+  final scriptFile = await _buildScript(config, appBuildDir);
+  await _buildInstaller(config, scriptFile);
+
   if (hf) print(BUILD_END_MESSAGE);
 }
