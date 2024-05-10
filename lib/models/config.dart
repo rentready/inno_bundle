@@ -19,6 +19,8 @@ class Config {
   /// The name of the app after packaging.
   final String name;
 
+  final String displayName;
+
   /// A description of the app being packaged.
   final String description;
 
@@ -55,11 +57,21 @@ class Config {
   /// Whether to create an installer file.
   final bool installer;
 
+  final String args;
+
+  final String buildName;
+
+  final String buildNumber;
+
   /// Creates a [Config] instance with default values.
   const Config({
+    required this.args,
+    required this.buildName,
+    required this.buildNumber,
     required this.id,
     required this.pubspecName,
     required this.name,
+    required this.displayName,
     required this.description,
     required this.version,
     required this.publisher,
@@ -88,6 +100,9 @@ class Config {
     BuildType type = BuildType.debug,
     bool app = true,
     bool installer = true,
+    required String args,
+    required String buildName,
+    required String buildNumber,
   }) {
     if (json['inno_bundle'] is! Map<String, dynamic>) {
       CliLogger.error("inno_bundle section is missing from pubspec.yaml.");
@@ -120,12 +135,14 @@ class Config {
       exit(1);
     }
     final String name = inno['name'] ?? pubspecName;
+    final String displayName = inno['display_name'];
 
-    if ((inno['version'] ?? json['version']) is! String) {
-      CliLogger.error("version attribute is missing from pubspec.yaml.");
-      exit(1);
-    }
-    final String version = inno['version'] ?? json['version'];
+    // if ((inno['version'] ?? json['version']) is! String) {
+    //   CliLogger.error("version attribute is missing from pubspec.yaml.");
+    //   exit(1);
+    // }
+    // final String version = inno['version'] ?? json['version'];
+    final String version = "$buildName+$buildNumber";
 
     if ((inno['description'] ?? json['description']) is! String) {
       CliLogger.error("description attribute is missing from pubspec.yaml.");
@@ -186,9 +203,13 @@ class Config {
     final bool admin = json['admin'] ?? true;
 
     return Config(
+      args: args,
+      buildName: buildName,
+      buildNumber: buildNumber,
       id: id,
       pubspecName: pubspecName,
       name: name,
+      displayName: displayName,
       description: description,
       version: version,
       publisher: publisher,
@@ -211,6 +232,9 @@ class Config {
     BuildType type = BuildType.debug,
     bool app = true,
     bool installer = true,
+    required String args,
+    required String buildName,
+    required String buildNumber,
   }) {
     const filePath = 'pubspec.yaml';
     final yamlMap = loadYaml(File(filePath).readAsStringSync()) as Map;
@@ -221,6 +245,9 @@ class Config {
       type: type,
       app: app,
       installer: installer,
+      args: args,
+      buildName: buildName,
+      buildNumber: buildNumber,
     );
   }
 
@@ -230,6 +257,7 @@ class Config {
       'APP_ID': id,
       'PUBSPEC_NAME': pubspecName,
       'APP_NAME': name,
+      'APP_DISPLAY_NAME': displayName,
       'APP_NAME_CAMEL_CASE': camelCase(name),
       'APP_DESCRIPTION': description,
       'APP_VERSION': version,

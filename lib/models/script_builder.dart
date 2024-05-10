@@ -20,6 +20,7 @@ class ScriptBuilder {
   String _setup() {
     final id = config.id;
     final name = config.name;
+    final displayName = config.displayName;
     final version = config.version;
     final publisher = config.publisher;
     final url = config.url;
@@ -28,6 +29,8 @@ class ScriptBuilder {
     final privileges = config.admin ? 'admin' : 'lowest';
     final installerName = '${camelCase(name)}-x86_64-$version-Installer';
     var installerIcon = config.installerIcon;
+    var uninstallIcon = "{app}\\${config.exeName}";
+
     final outputDir = p.joinAll([
       Directory.current.path,
       ...installerBuildDir,
@@ -46,13 +49,16 @@ class ScriptBuilder {
     return '''
 [Setup]
 AppId=$id
-AppName=$name
+AppName=$displayName
+UninstallDisplayName=$displayName
+UninstallDisplayIcon=$uninstallIcon
+DefaultDialogFontName=Meiryo
 AppVersion=$version
 AppPublisher=$publisher
 AppPublisherURL=$url
 AppSupportURL=$supportUrl
 AppUpdatesURL=$updatesUrl
-DefaultDirName={autopf}\\$name
+DefaultDirName={autopf}\\$displayName
 PrivilegesRequired=$privileges
 OutputDir=$outputDir
 OutputBaseFilename=$installerName
@@ -135,7 +141,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
   }
 
   String _icons() {
-    final name = config.name;
+    final name = config.displayName;
     final exeName = config.exeName;
     return '''
 [Icons]
@@ -145,7 +151,7 @@ Name: "{autodesktop}\\$name"; Filename: "{app}\\$exeName"; Tasks: desktopicon
   }
 
   String _run() {
-    final name = config.name;
+    final name = config.displayName;
     final exeName = config.exeName;
     return '''
 [Run]
