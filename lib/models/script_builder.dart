@@ -102,7 +102,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
       } else {
         // override the default exe file name from the name provided by
         // flutter build, to the inno_bundle.name property value (if provided)
-        if (p.basename(filePath) == config.exePubspecName) {
+        if (p.basename(filePath) == config.exePubspecName &&
+            config.exeName != config.exePubspecName) {
           print("Renamed ${config.exePubspecName} ${config.exeName}");
           section += "Source: \"$filePath\"; DestDir: \"{app}\"; "
               "DestName: \"${config.exeName}\"; Flags: ignoreversion\n";
