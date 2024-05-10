@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:inno_bundle/models/app_builder.dart';
+import 'package:inno_bundle/builders/app_builder.dart';
 import 'package:inno_bundle/models/build_type.dart';
 import 'package:inno_bundle/models/config.dart';
-import 'package:inno_bundle/models/installer_builder.dart';
-import 'package:inno_bundle/models/script_builder.dart';
+import 'package:inno_bundle/builders/installer_builder.dart';
+import 'package:inno_bundle/builders/script_builder.dart';
 import 'package:inno_bundle/utils/constants.dart';
 
 /// Builds the application using the provided configuration.
