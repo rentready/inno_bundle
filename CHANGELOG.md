@@ -91,3 +91,19 @@
 - Update packages and lower back minimum dart and flutter versions.
 
 - rework usage of app name and pubspec name props. See [#2](https://github.com/hahouari/inno_bundle/issues/2).
+
+## 0.6.0
+
+- Add `--app-version` argument to `build` command to override app version from CLI.
+
+- Add `--build-args` argument to `build` command to append more args into `flutter build`.
+
+- Improve building app to include obfuscation during app build.
+
+- Improve uninstaller UI/UX info.
+
+- Add installer SVG file to demo assets under MIT license. (not a feature, but worth tracking)
+
+- Add Inno Setup installation step through `Chocolatey`.
+
+- Improve error messages and suggest repo link as guide for corrupted installs of Inno Setup.
