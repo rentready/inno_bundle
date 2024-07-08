@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:inno_bundle/builders/app_builder.dart';
-import 'package:inno_bundle/models/build_type.dart';
-import 'package:inno_bundle/models/config.dart';
 import 'package:inno_bundle/builders/installer_builder.dart';
 import 'package:inno_bundle/builders/script_builder.dart';
+import 'package:inno_bundle/models/build_type.dart';
+import 'package:inno_bundle/models/config.dart';
 import 'package:inno_bundle/utils/constants.dart';
 
 /// Builds the application using the provided configuration.
@@ -40,6 +40,7 @@ void main(List<String> arguments) async {
     ..addFlag('installer', defaultsTo: true, help: 'Build installer')
     ..addOption("build-args", help: "Appended to `flutter build`")
     ..addOption("app-version", help: "Override app version")
+    ..addOption("pubspec-name", help: "Override pubspec.yaml file")
     ..addFlag(
       'envs',
       defaultsTo: false,
@@ -66,6 +67,7 @@ void main(List<String> arguments) async {
     installer: parsedArgs['installer'],
     buildArgs: parsedArgs['build-args'],
     appVersion: parsedArgs['app-version'],
+    pubspecName: parsedArgs['pubspec-name'],
   );
 
   if (envs) {

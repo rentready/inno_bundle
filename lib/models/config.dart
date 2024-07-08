@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:inno_bundle/models/build_type.dart';
 import 'package:inno_bundle/models/language.dart';
 import 'package:inno_bundle/utils/cli_logger.dart';
@@ -211,8 +212,9 @@ class Config {
     bool installer = true,
     required String? buildArgs,
     required String? appVersion,
+    required String? pubspecName,
   }) {
-    const filePath = 'pubspec.yaml';
+    final filePath = pubspecName ?? 'pubspec.yaml';
     final yamlMap = loadYaml(File(filePath).readAsStringSync()) as Map;
     // yamlMap has the type YamlMap, which has several unwanted side effects
     final yamlConfig = yamlToMap(yamlMap as YamlMap);
